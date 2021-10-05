@@ -4,15 +4,18 @@ import com.devundefined.rijksmuseumsample.data.dto.CollectionDto
 
 class NetworkLoadService(private val api: RijksmuseumApi) {
 
-    suspend fun loadPage(page: Int): CollectionDto {
-        require(page > 0)
-        return api.getCollection(
-            key = API_KEY,
-            pageNumber = page,
-            itemsPerPage = ITEMS_COUNT_PER_PAGE,
-            sort = SORT_BY,
-            material = MATERIAL
-        )
+    suspend fun loadPage(page: Int): Result<CollectionDto> {
+        return runCatching {
+            require(page > 0)
+
+            api.getCollection(
+                key = API_KEY,
+                pageNumber = page,
+                itemsPerPage = ITEMS_COUNT_PER_PAGE,
+                sort = SORT_BY,
+                material = MATERIAL
+            )
+        }
     }
 
     private companion object {
