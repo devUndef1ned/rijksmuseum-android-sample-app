@@ -10,5 +10,6 @@ data class ArtObjectDto(
     val title: String,
     val hasImage: Boolean,
     val principalOrFirstMaker: String,
-    val headerImage: HeaderImageDto,
+    val headerImage: ImageDto,
+    val webImage: ImageDto,
 )
