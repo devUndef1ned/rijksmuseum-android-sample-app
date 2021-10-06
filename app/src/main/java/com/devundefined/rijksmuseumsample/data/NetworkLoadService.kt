@@ -1,12 +1,16 @@
 package com.devundefined.rijksmuseumsample.data
 
+import android.util.Log
 import com.devundefined.rijksmuseumsample.data.dto.CollectionDto
+import com.devundefined.rijksmuseumsample.data.dto.Mapper
+import com.devundefined.rijksmuseumsample.domain.PageData
+import javax.inject.Inject
 
-class NetworkLoadService(private val api: RijksmuseumApi) {
+class NetworkLoadService @Inject constructor(private val api: RijksmuseumApi) {
 
-    suspend fun loadPage(page: Int): Result<CollectionDto> {
+    suspend fun loadPage(page: Int): Result<PageData> {
         return runCatching {
-            require(page > 0)
+            require(page >= 0)
 
             api.getCollection(
                 key = API_KEY,
@@ -15,7 +19,8 @@ class NetworkLoadService(private val api: RijksmuseumApi) {
                 sort = SORT_BY,
                 material = MATERIAL
             )
-        }
+        }.map { Mapper.collectionDtoToPageData(it) }
+            .onFailure { Log.e("NetworkLoadService", "Failure occurs when loadPage\n$it") }
     }
 
     private companion object {

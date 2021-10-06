@@ -14,4 +14,8 @@ interface RijksmuseumApi {
         @Query("s") sort: String,
         @Query("material") material: String,
         ): CollectionDto
+
+    companion object {
+        const val BASE_URL = "https://www.rijksmuseum.nl/"
+    }
 }
