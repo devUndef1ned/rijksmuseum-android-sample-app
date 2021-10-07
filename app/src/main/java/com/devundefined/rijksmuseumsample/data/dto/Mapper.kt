@@ -1,8 +1,8 @@
 package com.devundefined.rijksmuseumsample.data.dto
 
-import com.devundefined.rijksmuseumsample.domain.ArtItem
-import com.devundefined.rijksmuseumsample.domain.ImageSpec
-import com.devundefined.rijksmuseumsample.domain.PageData
+import com.devundefined.rijksmuseumsample.domain.model.ArtItem
+import com.devundefined.rijksmuseumsample.domain.model.ImageSpec
+import com.devundefined.rijksmuseumsample.domain.model.PageData
 
 object Mapper {
     val collectionDtoToPageData: (CollectionDto) -> PageData =

@@ -1,9 +1,8 @@
 package com.devundefined.rijksmuseumsample.data
 
 import android.util.Log
-import com.devundefined.rijksmuseumsample.data.dto.CollectionDto
 import com.devundefined.rijksmuseumsample.data.dto.Mapper
-import com.devundefined.rijksmuseumsample.domain.PageData
+import com.devundefined.rijksmuseumsample.domain.model.PageData
 import javax.inject.Inject
 
 class NetworkLoadService @Inject constructor(private val api: RijksmuseumApi) {

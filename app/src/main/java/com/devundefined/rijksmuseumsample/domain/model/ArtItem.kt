@@ -1,4 +1,4 @@
-package com.devundefined.rijksmuseumsample.domain
+package com.devundefined.rijksmuseumsample.domain.model
 
 data class ArtItem(
     val id: String,
