@@ -20,7 +20,6 @@ import com.devundefined.rijksmuseumsample.domain.model.ArtItem
 fun CollectionScreen(state: CollectionScreenState) {
     when (state) {
         is CollectionScreenState.ScreenData -> ArtList(items = state.items)
-        CollectionScreenState.Empty -> Text("Empty result!")
         is CollectionScreenState.Failure -> Text("Failure occurs.\n${state.e.localizedMessage}")
         CollectionScreenState.Loading -> CircularProgressIndicator()
     }
@@ -29,15 +28,19 @@ fun CollectionScreen(state: CollectionScreenState) {
 
 @Composable
 fun ArtList(items: List<CollectionScreenItem>) {
-    LazyColumn(verticalArrangement = Arrangement.Center) {
-        this.items(items) { item ->
-            when (item) {
-                is CollectionScreenItem.ArtScreenItem -> ArtItemRow(item = item.artItem)
-                is CollectionScreenItem.AuthorItem -> Text(text = item.author)
-                CollectionScreenItem.FailedLoadingIndicator -> Text(text = "Loading failed")
-                CollectionScreenItem.LoadingIndicator -> CircularProgressIndicator()
-            }
+    if (items.isEmpty()) {
 
+    } else {
+        LazyColumn(verticalArrangement = Arrangement.Center) {
+            this.items(items) { item ->
+                when (item) {
+                    is CollectionScreenItem.ArtScreenItem -> ArtItemRow(item = item.artItem)
+                    is CollectionScreenItem.AuthorItem -> Text(text = item.author)
+                    CollectionScreenItem.FailedLoadingIndicator -> Text(text = "Loading failed")
+                    CollectionScreenItem.LoadingIndicator -> CircularProgressIndicator()
+                }
+
+            }
         }
     }
 }

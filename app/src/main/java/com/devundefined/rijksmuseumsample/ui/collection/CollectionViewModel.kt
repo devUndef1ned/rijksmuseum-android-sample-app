@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CollectionViewModel @Inject constructor(
     private val dataProvider: CollectionDataProvider,
-    private val collectionState: CollectionDataState,
+    collectionState: CollectionDataState,
 ) : ViewModel() {
 
     val state: Flow<CollectionScreenState> = collectionState.state.map { collectionState ->
