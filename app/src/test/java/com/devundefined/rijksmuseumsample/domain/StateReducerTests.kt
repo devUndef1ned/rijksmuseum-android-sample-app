@@ -23,44 +23,44 @@ internal class StateReducerTests {
         baseTest<CollectionState.EmptyResult>(
             CollectionState.InitialLoading,
             Result.success(
-                PageData(emptyList(), 0)
+                PageData(emptySet(), 0, 1)
             )
         )
     }
 
     @Test
     fun `Given Initial loading current state And some network result When reduce state Should return Collection Data`() {
-        baseTest<CollectionState.CollectionData>(
+        baseTest<CollectionState.DataState.CollectionData>(
             CollectionState.InitialLoading,
             Result.success(
-                PageData(listOf(mock(), mock()), 0)
+                PageData(setOf(mock(), mock()), 0, 1)
             )
         )
     }
 
     @Test
     fun `Given Initial failure current state And some network result When reduce state Should return Collection Data`() {
-        baseTest<CollectionState.CollectionData>(
+        baseTest<CollectionState.DataState.CollectionData>(
             CollectionState.InitialFailure(IllegalStateException("error")),
             Result.success(
-                PageData(listOf(mock(), mock()), 0)
+                PageData(setOf(mock(), mock()), 0, 1)
             )
         )
     }
 
     @Test
     fun `Given CollectionData current state And failed network result When reduce state Should return data with failure`() {
-        baseTest<CollectionState.DataWithFailure>(
-            CollectionState.CollectionData(mapOf(), true),
+        baseTest<CollectionState.DataState.DataWithFailure>(
+            CollectionState.DataState.CollectionData(mapOf(), 0, 1),
             Result.failure(IllegalStateException("error"))
         )
     }
 
     @Test
     fun `Given CollectionData current state And some network result When reduce state Should return Collection data`() {
-        baseTest<CollectionState.CollectionData>(
-            CollectionState.CollectionData(mapOf(), true),
-            Result.success(PageData(listOf(mock(), mock()), 1))
+        baseTest<CollectionState.DataState.CollectionData>(
+            CollectionState.DataState.CollectionData(mapOf(), 0, 1),
+            Result.success(PageData(setOf(mock(), mock()), 1, 2))
         )
     }
 

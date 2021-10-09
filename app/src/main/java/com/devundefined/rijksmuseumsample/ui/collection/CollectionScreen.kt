@@ -40,11 +40,13 @@ fun CollectionScreen(state: CollectionScreenState, loadMoreAction: () -> Unit = 
                 loadMoreAction = loadMoreAction
             )
             is CollectionScreenState.Failure -> Text("Failure occurs.\n${state.e.localizedMessage}")
-            CollectionScreenState.Loading -> CircularProgressIndicator(
-                modifier = Modifier.align(
-                    Alignment.Center
+            CollectionScreenState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(
+                        Alignment.Center
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -71,7 +73,9 @@ fun ArtList(items: List<CollectionScreenItem>, loadMoreAction: () -> Unit = {}) 
 
 @Composable
 fun Loader() {
-    Box(modifier = Modifier.padding(16.dp)) {
+    Box(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxWidth()) {
         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
     }
 }
@@ -146,6 +150,12 @@ fun ArtItemListPreview() {
 @Composable
 fun ArtItemPreview() {
     ArtItemRow(item = artItem, isLast = false)
+}
+
+@Preview
+@Composable
+fun LoaderPreview() {
+    Loader()
 }
 
 private val artItem = ArtItem(

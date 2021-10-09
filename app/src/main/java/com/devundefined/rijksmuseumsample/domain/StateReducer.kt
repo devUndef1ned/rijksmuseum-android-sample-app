@@ -41,7 +41,7 @@ class StateReducer {
                 CollectionState.EmptyResult
             } else {
                 CollectionState.DataState.CollectionData(
-                    networkData.pageData.groupBy(ArtItem::principalOrFirstMaker),
+                    networkData.pageData.groupBy(ArtItem::principalOrFirstMaker).mapValues { it.value.toSet() },
                     0,
                     calculatePageCount(networkData.totalCount, networkData.itemsPerPage)
                 )
@@ -60,7 +60,7 @@ class StateReducer {
     }
 
     private fun reduceDataState(
-        dataMap: Map<String, List<ArtItem>>,
+        dataMap: Map<String, Set<ArtItem>>,
         currentPage: Int,
         totalPages: Int,
         networkResult: Result<PageData>
@@ -70,7 +70,7 @@ class StateReducer {
             val newList =
                 dataMap.entries.fold(emptyList<ArtItem>()) { acc, entry -> acc + entry.value } + resultData.pageData
             CollectionState.DataState.CollectionData(
-                newList.groupBy(ArtItem::principalOrFirstMaker),
+                newList.groupBy(ArtItem::principalOrFirstMaker).mapValues { it.value.toSet() },
                 currentPage = currentPage + 1,
                 totalPages = totalPages,
             )

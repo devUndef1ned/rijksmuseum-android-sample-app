@@ -19,7 +19,7 @@ object UiMapper {
         return CollectionScreenState.ScreenData(dataMapToScreenItems(collectionState.dataMap) + CollectionScreenItem.LoadingIndicator)
     }
 
-    private fun dataMapToScreenItems(dataMap: Map<String, List<ArtItem>>): List<CollectionScreenItem> {
+    private fun dataMapToScreenItems(dataMap: Map<String, Set<ArtItem>>): List<CollectionScreenItem> {
         return dataMap.entries.fold(emptyList()) { acc, entry ->
             acc + CollectionScreenItem.AuthorItem(entry.key) + entry.value.map(CollectionScreenItem::ArtScreenItem)
         }

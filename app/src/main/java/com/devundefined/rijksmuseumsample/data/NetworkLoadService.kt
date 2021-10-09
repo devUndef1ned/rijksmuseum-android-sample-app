@@ -11,6 +11,8 @@ class NetworkLoadService @Inject constructor(private val api: RijksmuseumApi) {
         return runCatching {
             require(page >= 0)
 
+            Log.d("NetworkLoadService", "Request page #$page")
+
             api.getCollection(
                 key = API_KEY,
                 pageNumber = page,
