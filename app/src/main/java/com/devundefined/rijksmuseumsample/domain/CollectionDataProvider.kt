@@ -22,4 +22,17 @@ class CollectionDataProvider @Inject constructor(
             state.value = stateReducer.reduceState(state.value, networkResult)
         }
     }
+
+    suspend fun loadMore() {
+        val currentState = state.value
+        if (currentState is CollectionState.DataState && state.value !is CollectionState.DataState.DataLoadingMore) {
+            state.value = CollectionState.DataState.DataLoadingMore(
+                dataMap = currentState.dataMap,
+                currentPage = currentState.currentPage,
+                totalPages = currentState.totalPages
+            )
+            val networkResult = loadService.loadPage(currentState.currentPage + 1)
+            state.value = stateReducer.reduceState(state.value, networkResult)
+        }
+    }
 }

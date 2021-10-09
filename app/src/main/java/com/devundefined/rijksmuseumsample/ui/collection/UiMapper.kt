@@ -5,18 +5,18 @@ import com.devundefined.rijksmuseumsample.domain.model.CollectionState
 
 object UiMapper {
 
-    fun collectionDataToScreenData(collectionData: CollectionState.CollectionData): CollectionScreenState {
-        val items = dataMapToScreenItems(collectionData.dataMap)
-        return when {
-            collectionData.containsMore -> CollectionScreenState.ScreenData(items + CollectionScreenItem.LoadingIndicator)
-            else -> CollectionScreenState.ScreenData(items)
-        }
+    fun collectionDataToScreenData(collectionData: CollectionState.DataState.CollectionData): CollectionScreenState {
+        return CollectionScreenState.ScreenData(dataMapToScreenItems(collectionData.dataMap))
     }
 
-    fun collectionDataWithFailureToScreenData(collectionDataWithFailure: CollectionState.DataWithFailure): CollectionScreenState {
+    fun collectionDataWithFailureToScreenData(collectionDataWithFailure: CollectionState.DataState.DataWithFailure): CollectionScreenState {
         return CollectionScreenState.ScreenData(
-            dataMapToScreenItems(collectionDataWithFailure.currentData.dataMap) + CollectionScreenItem.FailedLoadingIndicator
+            dataMapToScreenItems(collectionDataWithFailure.dataMap) + CollectionScreenItem.FailedLoadingIndicator
         )
+    }
+
+    fun collectionDataLoadingMoreToScreenData(collectionState: CollectionState.DataState.DataLoadingMore): CollectionScreenState {
+        return CollectionScreenState.ScreenData(dataMapToScreenItems(collectionState.dataMap) + CollectionScreenItem.LoadingIndicator)
     }
 
     private fun dataMapToScreenItems(dataMap: Map<String, List<ArtItem>>): List<CollectionScreenItem> {

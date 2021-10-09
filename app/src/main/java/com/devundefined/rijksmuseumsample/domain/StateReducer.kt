@@ -10,12 +10,25 @@ class StateReducer {
         networkResult: Result<PageData>
     ): CollectionState {
         return when (currentState) {
-            is CollectionState.CollectionData -> reduceDataState(currentState, networkResult)
-            is CollectionState.DataWithFailure -> reduceDataState(
-                currentState.currentData,
+            is CollectionState.DataState.CollectionData -> reduceDataState(
+                currentState.dataMap,
+                currentState.currentPage,
+                currentState.totalPages,
                 networkResult
             )
-            CollectionState.EmptyResult -> reduceInitial(networkResult)
+            is CollectionState.DataState.DataWithFailure -> reduceDataState(
+                currentState.dataMap,
+                currentState.currentPage,
+                currentState.totalPages,
+                networkResult
+            )
+            is CollectionState.DataState.DataLoadingMore -> reduceDataState(
+                currentState.dataMap,
+                currentState.currentPage,
+                currentState.totalPages,
+                networkResult
+            )
+            is CollectionState.EmptyResult -> reduceInitial(networkResult)
             is CollectionState.InitialFailure -> reduceInitial(networkResult)
             CollectionState.InitialLoading -> reduceInitial(networkResult)
         }
@@ -24,12 +37,13 @@ class StateReducer {
     private fun reduceInitial(networkResult: Result<PageData>): CollectionState {
         return if (networkResult.isSuccess) {
             val networkData = networkResult.getOrThrow()
-            if (networkData.data.isEmpty() && networkData.pageNumber == 0) {
+            if (networkData.pageData.isEmpty() && networkData.totalCount == 0) {
                 CollectionState.EmptyResult
             } else {
-                CollectionState.CollectionData(
-                    networkData.data.groupBy(ArtItem::principalOrFirstMaker),
-                    networkData.containsMore
+                CollectionState.DataState.CollectionData(
+                    networkData.pageData.groupBy(ArtItem::principalOrFirstMaker),
+                    0,
+                    calculatePageCount(networkData.totalCount, networkData.itemsPerPage)
                 )
             }
         } else {
@@ -41,23 +55,27 @@ class StateReducer {
         }
     }
 
+    private fun calculatePageCount(totalCount: Int, itemsPerPage: Int): Int {
+        return totalCount / itemsPerPage + if (totalCount % itemsPerPage == 0) 0 else 1
+    }
+
     private fun reduceDataState(
-        currentState: CollectionState.CollectionData,
+        dataMap: Map<String, List<ArtItem>>,
+        currentPage: Int,
+        totalPages: Int,
         networkResult: Result<PageData>
     ): CollectionState {
         return if (networkResult.isSuccess) {
             val resultData = networkResult.getOrThrow()
             val newList =
-                currentState.dataMap.entries.fold(emptyList<ArtItem>()) { acc, entry -> acc + entry.value } + resultData.data
-            CollectionState.CollectionData(
+                dataMap.entries.fold(emptyList<ArtItem>()) { acc, entry -> acc + entry.value } + resultData.pageData
+            CollectionState.DataState.CollectionData(
                 newList.groupBy(ArtItem::principalOrFirstMaker),
-                containsMore = resultData.containsMore
+                currentPage = currentPage + 1,
+                totalPages = totalPages,
             )
         } else {
-            CollectionState.DataWithFailure(
-                currentState,
-                networkResult.exceptionOrNull() ?: IllegalStateException("Unknown error")
-            )
+            CollectionState.DataState.DataWithFailure(dataMap, currentPage, totalPages, networkResult.exceptionOrNull() ?: IllegalStateException("Unknown error"))
         }
     }
 }

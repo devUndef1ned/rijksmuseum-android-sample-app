@@ -3,9 +3,8 @@ package com.devundefined.rijksmuseumsample.ui.collection
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -16,8 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,41 +25,54 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
-import coil.size.Scale
-import coil.size.Size
-import coil.size.SizeResolver
-import com.devundefined.rijksmuseumsample.R
 import com.devundefined.rijksmuseumsample.domain.model.ArtItem
 import com.devundefined.rijksmuseumsample.domain.model.ImageSpec
-import com.devundefined.rijksmuseumsample.ui.theme.RijksmuseumSampleTheme
-
+import com.devundefined.rijksmuseumsample.R
 
 @Composable
-fun CollectionScreen(state: CollectionScreenState) {
-    when (state) {
-        is CollectionScreenState.ScreenData -> ArtList(items = state.items)
-        is CollectionScreenState.Failure -> Text("Failure occurs.\n${state.e.localizedMessage}")
-        CollectionScreenState.Loading -> CircularProgressIndicator()
+fun CollectionScreen(state: CollectionScreenState, loadMoreAction: () -> Unit = {}) {
+    Box(
+        modifier = Modifier.background(color = colorResource(id = R.color.primary_most_light))
+    ) {
+        when (state) {
+            is CollectionScreenState.ScreenData -> ArtList(
+                items = state.items,
+                loadMoreAction = loadMoreAction
+            )
+            is CollectionScreenState.Failure -> Text("Failure occurs.\n${state.e.localizedMessage}")
+            CollectionScreenState.Loading -> CircularProgressIndicator(
+                modifier = Modifier.align(
+                    Alignment.Center
+                )
+            )
+        }
     }
 
 }
 
 @Composable
-fun ArtList(items: List<CollectionScreenItem>) {
+fun ArtList(items: List<CollectionScreenItem>, loadMoreAction: () -> Unit = {}) {
     if (items.isEmpty()) {
         Text(text = "Empty result")
     } else {
         LazyColumn {
-            this.items(items) { item ->
+            this.itemsIndexed(items) { index, item ->
                 when (item) {
-                    is CollectionScreenItem.ArtScreenItem -> ArtItemRow(item = item.artItem)
+                    is CollectionScreenItem.ArtScreenItem -> ArtItemRow(item = item.artItem, isLast = index == items.lastIndex, loadMoreAction = loadMoreAction)
                     is CollectionScreenItem.AuthorItem -> AuthorRow(item.author.capitalize(Locale.current))
                     CollectionScreenItem.FailedLoadingIndicator -> Text(text = "Loading failed")
-                    CollectionScreenItem.LoadingIndicator -> CircularProgressIndicator()
+                    CollectionScreenItem.LoadingIndicator -> Loader()
                 }
 
             }
         }
+    }
+}
+
+@Composable
+fun Loader() {
+    Box(modifier = Modifier.padding(16.dp)) {
+        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
     }
 }
 
@@ -80,25 +92,26 @@ fun AuthorRow(authorName: String) {
             )
             .background(color = colorResource(id = R.color.primary_dark)),
 
-    ) {
+        ) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             text = authorName,
-            fontSize = 30.sp,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
             color = Color.White
         )
     }
 }
 
 @Composable
-fun ArtItemRow(item: ArtItem) {
+fun ArtItemRow(item: ArtItem, isLast: Boolean, loadMoreAction: () -> Unit = {}) {
     Box(modifier = Modifier.padding(horizontal = 8.dp)) {
         Image(
             painter = rememberImagePainter(
                 data = item.headerImage.url,
                 builder = {
                     crossfade(true)
-                    placeholder(R.drawable.placeholder_background)
+                    placeholder(R.drawable.image_placeholder_with_background)
                     size(OriginalSize)
                 }
             ),
@@ -118,6 +131,9 @@ fun ArtItemRow(item: ArtItem) {
             overflow = TextOverflow.Ellipsis,
         )
     }
+    if (isLast) {
+        loadMoreAction()
+    }
 }
 
 @Preview
@@ -129,7 +145,7 @@ fun ArtItemListPreview() {
 @Preview
 @Composable
 fun ArtItemPreview() {
-    ArtItemRow(item = artItem)
+    ArtItemRow(item = artItem, isLast = false)
 }
 
 private val artItem = ArtItem(
@@ -152,7 +168,5 @@ private val artItem = ArtItem(
 
 private val artItemList = listOf(
     CollectionScreenItem.AuthorItem(artItem.principalOrFirstMaker),
-    CollectionScreenItem.ArtScreenItem(
-        artItem
-    )
+    CollectionScreenItem.ArtScreenItem(artItem)
 )

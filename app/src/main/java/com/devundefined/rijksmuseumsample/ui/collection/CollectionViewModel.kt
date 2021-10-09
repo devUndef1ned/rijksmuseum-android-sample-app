@@ -24,8 +24,9 @@ class CollectionViewModel @Inject constructor(
 
     val state: Flow<CollectionScreenState> = collectionState.state.map { collectionState ->
         when(collectionState) {
-            is CollectionState.CollectionData -> UiMapper.collectionDataToScreenData(collectionState)
-            is CollectionState.DataWithFailure -> UiMapper.collectionDataWithFailureToScreenData(collectionState)
+            is CollectionState.DataState.CollectionData -> UiMapper.collectionDataToScreenData(collectionState)
+            is CollectionState.DataState.DataWithFailure -> UiMapper.collectionDataWithFailureToScreenData(collectionState)
+            is CollectionState.DataState.DataLoadingMore -> UiMapper.collectionDataLoadingMoreToScreenData(collectionState)
             is CollectionState.InitialFailure -> CollectionScreenState.Failure(collectionState.failure)
             CollectionState.InitialLoading -> CollectionScreenState.Loading
             CollectionState.EmptyResult -> CollectionScreenState.Failure(IllegalStateException("Empty result"))
@@ -39,4 +40,12 @@ class CollectionViewModel @Inject constructor(
                 }
             }
         }
+
+    fun loadMore() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                dataProvider.loadMore()
+            }
+        }
+    }
 }

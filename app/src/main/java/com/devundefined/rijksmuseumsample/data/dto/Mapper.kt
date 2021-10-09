@@ -5,8 +5,8 @@ import com.devundefined.rijksmuseumsample.domain.model.ImageSpec
 import com.devundefined.rijksmuseumsample.domain.model.PageData
 
 object Mapper {
-    val collectionDtoToPageData: (CollectionDto) -> PageData =
-        { dto -> PageData(dto.artObjects.map(artItemDtoToModel), dto.count) }
+    val collectionDtoToPageData: (CollectionDto, Int) -> PageData =
+        { dto, itemsPerPage -> PageData(dto.artObjects.map(artItemDtoToModel), dto.count, itemsPerPage) }
 
     private val artItemDtoToModel: ArtObjectDto.() -> ArtItem = {
         ArtItem(

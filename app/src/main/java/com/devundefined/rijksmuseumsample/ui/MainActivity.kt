@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             RijksmuseumSampleTheme {
                 val state by collectionViewModel.state.collectAsState(initial = CollectionScreenState.Loading)
-                CollectionScreen(state = state)
+                CollectionScreen(state = state, loadMoreAction = collectionViewModel::loadMore)
             }
         }
     }

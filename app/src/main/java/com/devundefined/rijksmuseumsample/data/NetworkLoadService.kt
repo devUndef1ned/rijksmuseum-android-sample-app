@@ -18,12 +18,12 @@ class NetworkLoadService @Inject constructor(private val api: RijksmuseumApi) {
                 sort = SORT_BY,
                 material = MATERIAL
             )
-        }.map { Mapper.collectionDtoToPageData(it) }
+        }.map { Mapper.collectionDtoToPageData(it, ITEMS_COUNT_PER_PAGE) }
             .onFailure { Log.e("NetworkLoadService", "Failure occurs when loadPage\n$it") }
     }
 
     private companion object {
-        private const val ITEMS_COUNT_PER_PAGE = 100
+        private const val ITEMS_COUNT_PER_PAGE = 30
         private const val API_KEY = "0fiuZFh4"
         private const val SORT_BY = "artist"
         private const val MATERIAL = "canvas"
