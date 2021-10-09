@@ -28,10 +28,16 @@ fun CollectionScreen(state: CollectionScreenState) {
 }
 
 @Composable
-fun ArtList(items: List<ArtItem>) {
+fun ArtList(items: List<CollectionScreenItem>) {
     LazyColumn(verticalArrangement = Arrangement.Center) {
         this.items(items) { item ->
-            ArtItemRow(item = item)
+            when (item) {
+                is CollectionScreenItem.ArtScreenItem -> ArtItemRow(item = item.artItem)
+                is CollectionScreenItem.AuthorItem -> Text(text = item.author)
+                CollectionScreenItem.FailedLoadingIndicator -> Text(text = "Loading failed")
+                CollectionScreenItem.LoadingIndicator -> CircularProgressIndicator()
+            }
+
         }
     }
 }

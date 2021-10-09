@@ -28,7 +28,7 @@ class CollectionViewModel @Inject constructor(
             is CollectionState.DataWithFailure -> UiMapper.collectionDataWithFailureToScreenData(collectionState)
             is CollectionState.InitialFailure -> CollectionScreenState.Failure(collectionState.failure)
             CollectionState.InitialLoading -> CollectionScreenState.Loading
-            is CollectionState.LoadingMore -> TODO() // CollectionScreenState.
+            CollectionState.EmptyResult -> CollectionScreenState.Failure(IllegalStateException("Empty result"))
         }
     }
 
