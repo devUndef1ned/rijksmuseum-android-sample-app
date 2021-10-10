@@ -2,6 +2,7 @@ package com.devundefined.rijksmuseumsample.ui.collection
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -25,19 +26,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.size.OriginalSize
+import com.devundefined.rijksmuseumsample.R
 import com.devundefined.rijksmuseumsample.domain.model.ArtItem
 import com.devundefined.rijksmuseumsample.domain.model.ImageSpec
-import com.devundefined.rijksmuseumsample.R
 
 @Composable
-fun CollectionScreen(state: CollectionScreenState, loadMoreAction: () -> Unit = {}) {
+fun CollectionScreen(
+    state: CollectionScreenState,
+    loadMoreAction: () -> Unit = {},
+    clickItemAction: (String) -> Unit = {},
+) {
     Box(
         modifier = Modifier.background(color = colorResource(id = R.color.primary_most_light))
     ) {
         when (state) {
             is CollectionScreenState.ScreenData -> ArtList(
                 items = state.items,
-                loadMoreAction = loadMoreAction
+                loadMoreAction = loadMoreAction,
+                clickItemAction = clickItemAction
             )
             is CollectionScreenState.Failure -> Text("Failure occurs.\n${state.e.localizedMessage}")
             CollectionScreenState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
@@ -53,14 +59,23 @@ fun CollectionScreen(state: CollectionScreenState, loadMoreAction: () -> Unit = 
 }
 
 @Composable
-fun ArtList(items: List<CollectionScreenItem>, loadMoreAction: () -> Unit = {}) {
+fun ArtList(
+    items: List<CollectionScreenItem>,
+    loadMoreAction: () -> Unit = {},
+    clickItemAction: (String) -> Unit = {}
+) {
     if (items.isEmpty()) {
         Text(text = "Empty result")
     } else {
         LazyColumn {
             this.itemsIndexed(items) { index, item ->
                 when (item) {
-                    is CollectionScreenItem.ArtScreenItem -> ArtItemRow(item = item.artItem, isLast = index == items.lastIndex, loadMoreAction = loadMoreAction)
+                    is CollectionScreenItem.ArtScreenItem -> ArtItemRow(
+                        item = item.artItem,
+                        isLast = index == items.lastIndex,
+                        loadMoreAction = loadMoreAction,
+                        clickItemAction = clickItemAction,
+                    )
                     is CollectionScreenItem.AuthorItem -> AuthorRow(item.author.capitalize(Locale.current))
                     CollectionScreenItem.FailedLoadingIndicator -> Text(text = "Loading failed")
                     CollectionScreenItem.LoadingIndicator -> Loader()
@@ -73,9 +88,11 @@ fun ArtList(items: List<CollectionScreenItem>, loadMoreAction: () -> Unit = {}) 
 
 @Composable
 fun Loader() {
-    Box(modifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth()) {
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
     }
 }
@@ -108,8 +125,8 @@ fun AuthorRow(authorName: String) {
 }
 
 @Composable
-fun ArtItemRow(item: ArtItem, isLast: Boolean, loadMoreAction: () -> Unit = {}) {
-    Box(modifier = Modifier.padding(horizontal = 8.dp)) {
+fun ArtItemRow(item: ArtItem, isLast: Boolean, loadMoreAction: () -> Unit = {}, clickItemAction: (String) -> Unit = {}) {
+    Box(modifier = Modifier.padding(horizontal = 8.dp).clickable { clickItemAction(artItem.id) }) {
         Image(
             painter = rememberImagePainter(
                 data = item.headerImage.url,
