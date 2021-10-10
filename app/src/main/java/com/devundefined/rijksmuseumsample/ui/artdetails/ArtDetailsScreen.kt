@@ -137,7 +137,10 @@ fun ArtDetailsCard(artItemDetails: ArtItemDetails, size: Size) {
 }
 
 @Composable
-fun FailedContent(retryAction: () -> Unit = {}) {
+fun FailedContent(
+    retryAction: () -> Unit = {},
+    text: String = "Error occurs!\nCheck internet connection and retry again please."
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -145,7 +148,7 @@ fun FailedContent(retryAction: () -> Unit = {}) {
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 50.dp),
-                text = "Error occurs!\nCheck internet connection and retry again please.",
+                text = text,
                 fontSize = 24.sp,
                 color = colorResource(id = R.color.primary_most_dark),
                 textAlign = TextAlign.Center,

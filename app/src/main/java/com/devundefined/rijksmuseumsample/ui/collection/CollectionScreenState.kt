@@ -5,7 +5,7 @@ import com.devundefined.rijksmuseumsample.domain.model.ArtItem
 sealed class CollectionScreenState {
     object Loading : CollectionScreenState()
     class Failure(val e: Throwable) : CollectionScreenState()
-    class ScreenData(val items: List<CollectionScreenItem>)  : CollectionScreenState()
+    class ScreenData(val items: List<CollectionScreenItem>, val currentPage: Int)  : CollectionScreenState()
 }
 
 sealed class CollectionScreenItem {

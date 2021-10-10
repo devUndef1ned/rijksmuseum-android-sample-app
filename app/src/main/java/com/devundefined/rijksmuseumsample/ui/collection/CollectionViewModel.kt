@@ -34,12 +34,24 @@ class CollectionViewModel @Inject constructor(
     }
 
         init {
-            viewModelScope.launch {
-                withContext(Dispatchers.IO) {
-                    dataProvider.initialLoading()
-                }
+            load()
+        }
+
+    private fun load() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                dataProvider.initialLoading()
             }
         }
+    }
+
+    fun retry(pageNumber: Int) {
+        if (pageNumber == 0) {
+            load()
+        } else {
+            loadMore()
+        }
+    }
 
     fun loadMore() {
         viewModelScope.launch {

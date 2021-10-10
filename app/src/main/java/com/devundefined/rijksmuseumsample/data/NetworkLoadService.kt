@@ -38,7 +38,7 @@ class NetworkLoadService @Inject constructor(private val api: RijksmuseumApi) {
 
     private companion object {
         private const val TAG = "NetworkLoadService"
-        private const val ITEMS_COUNT_PER_PAGE = 30
+        private const val ITEMS_COUNT_PER_PAGE = 5
         private const val API_KEY = "0fiuZFh4"
         private const val SORT_BY = "artist"
         private const val MATERIAL = "canvas"

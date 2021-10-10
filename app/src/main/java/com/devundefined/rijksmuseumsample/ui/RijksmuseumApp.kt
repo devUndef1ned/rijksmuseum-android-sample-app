@@ -30,7 +30,9 @@ fun RijksmuseumApp() {
                 loadMoreAction = collectionViewModel::loadMore,
                 clickItemAction = { id ->
                     navController.navigate(Screen.ArtDetailsScreen.createRoute(id))
-                })
+                },
+                retryAction = collectionViewModel::retry
+            )
         }
 
         composable(

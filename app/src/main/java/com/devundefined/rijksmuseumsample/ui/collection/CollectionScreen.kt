@@ -32,12 +32,15 @@ import com.devundefined.rijksmuseumsample.R
 import com.devundefined.rijksmuseumsample.domain.model.ArtItem
 import com.devundefined.rijksmuseumsample.domain.model.ImageSpec
 import com.devundefined.rijksmuseumsample.ui.ImageSizeResolver
+import com.devundefined.rijksmuseumsample.ui.artdetails.FailedContent
+import com.devundefined.rijksmuseumsample.ui.theme.RijksmuseumSampleTheme
 
 @Composable
 fun CollectionScreen(
     state: CollectionScreenState,
     loadMoreAction: () -> Unit = {},
     clickItemAction: (String) -> Unit = {},
+    retryAction: (Int) -> Unit = {},
 ) {
     Box(
         modifier = Modifier.background(color = colorResource(id = R.color.primary_most_light))
@@ -46,9 +49,10 @@ fun CollectionScreen(
             is CollectionScreenState.ScreenData -> ArtList(
                 items = state.items,
                 loadMoreAction = loadMoreAction,
-                clickItemAction = clickItemAction
+                clickItemAction = clickItemAction,
+                retryAction = { retryAction(state.currentPage) }
             )
-            is CollectionScreenState.Failure -> Text("Failure occurs.\n${state.e.localizedMessage}")
+            is CollectionScreenState.Failure -> FailedContent(retryAction = { retryAction(0) })
             CollectionScreenState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(
@@ -65,10 +69,14 @@ fun CollectionScreen(
 fun ArtList(
     items: List<CollectionScreenItem>,
     loadMoreAction: () -> Unit = {},
-    clickItemAction: (String) -> Unit = {}
+    clickItemAction: (String) -> Unit = {},
+    retryAction: () -> Unit = {},
 ) {
     if (items.isEmpty()) {
-        Text(text = "Empty result")
+        FailedContent(
+            retryAction = retryAction,
+            text = "Empty result!\nCheck your connection, request params and try again."
+        )
     } else {
         LazyColumn {
             this.itemsIndexed(items) { index, item ->
@@ -80,7 +88,7 @@ fun ArtList(
                         clickItemAction = clickItemAction,
                     )
                     is CollectionScreenItem.AuthorItem -> AuthorRow(item.author.capitalize(Locale.current))
-                    CollectionScreenItem.FailedLoadingIndicator -> Text(text = "Loading failed")
+                    CollectionScreenItem.FailedLoadingIndicator -> FailedContent(retryAction)
                     CollectionScreenItem.LoadingIndicator -> Loader()
                 }
 
@@ -188,6 +196,14 @@ fun ArtItemPreview() {
 @Composable
 fun LoaderPreview() {
     Loader()
+}
+
+@Preview
+@Composable
+fun EmptyPreview() {
+    RijksmuseumSampleTheme {
+        CollectionScreen(state = CollectionScreenState.ScreenData(emptyList(), 0))
+    }
 }
 
 private val artItem = ArtItem(
