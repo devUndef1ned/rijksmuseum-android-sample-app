@@ -1,10 +1,9 @@
 package com.devundefined.rijksmuseumsample.domain
 
 import com.devundefined.rijksmuseumsample.data.NetworkLoadService
+import com.devundefined.rijksmuseumsample.domain.model.ArtItemDetails
 import com.devundefined.rijksmuseumsample.domain.model.CollectionState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CollectionDataProvider @Inject constructor(
@@ -17,10 +16,8 @@ class CollectionDataProvider @Inject constructor(
 
     suspend fun initialLoading() {
         state.value = CollectionState.InitialLoading
-        withContext(Dispatchers.IO) {
-            val networkResult = loadService.loadPage(0)
-            state.value = stateReducer.reduceState(state.value, networkResult)
-        }
+        val networkResult = loadService.loadPage(0)
+        state.value = stateReducer.reduceState(state.value, networkResult)
     }
 
     suspend fun loadMore() {
@@ -34,5 +31,9 @@ class CollectionDataProvider @Inject constructor(
             val networkResult = loadService.loadPage(currentState.currentPage + 1)
             state.value = stateReducer.reduceState(state.value, networkResult)
         }
+    }
+
+    suspend fun loadDetails(itemNumber: String): Result<ArtItemDetails> {
+        return loadService.loadDetails(itemNumber)
     }
 }

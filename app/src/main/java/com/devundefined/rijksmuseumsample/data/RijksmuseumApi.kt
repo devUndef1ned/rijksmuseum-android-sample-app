@@ -1,7 +1,9 @@
 package com.devundefined.rijksmuseumsample.data
 
+import com.devundefined.rijksmuseumsample.data.dto.ArtDetailsDto
 import com.devundefined.rijksmuseumsample.data.dto.CollectionDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RijksmuseumApi {
@@ -13,7 +15,13 @@ interface RijksmuseumApi {
         @Query("ps") itemsPerPage: Int,
         @Query("s") sort: String,
         @Query("material") material: String,
-        ): CollectionDto
+    ): CollectionDto
+
+    @GET("/api/en/collection/{id}")
+    suspend fun getArtDetails(
+        @Path("id") itemNumber: String,
+        @Query("key") key: String
+    ): ArtDetailsDto
 
     companion object {
         const val BASE_URL = "https://www.rijksmuseum.nl/"
