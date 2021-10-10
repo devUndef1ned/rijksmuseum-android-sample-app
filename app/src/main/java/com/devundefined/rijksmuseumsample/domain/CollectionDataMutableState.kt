@@ -5,5 +5,4 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class CollectionDataMutableState : CollectionDataState {
     override val state: MutableStateFlow<CollectionState> = MutableStateFlow(CollectionState.InitialLoading)
-    val loadingMoreState: MutableStateFlow<Boolean> = MutableStateFlow(false)
 }
