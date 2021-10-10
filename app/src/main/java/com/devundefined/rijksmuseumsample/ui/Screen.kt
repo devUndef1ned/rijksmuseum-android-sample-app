@@ -5,7 +5,7 @@ sealed class Screen(val screenName: String) {
 
     object CollectionScreen : Screen("collection")
     object ArtDetailsScreen : Screen("artDetails") {
-        fun createRoute(itemId: String) = "artDetails/{$itemId}"
+        fun createRoute(itemId: String) = "artDetails/$itemId"
     }
 
     companion object {

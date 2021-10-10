@@ -1,8 +1,10 @@
 package com.devundefined.rijksmuseumsample.ui.artdetails
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devundefined.rijksmuseumsample.domain.CollectionDataProvider
+import com.devundefined.rijksmuseumsample.ui.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ArtDetailsViewModel @Inject constructor(
     private val dataProvider: CollectionDataProvider,
-    private val itemNumber: String
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val itemId = requireNotNull(savedStateHandle.get<String>(Screen.DETAILS_SCREEN_ARG_KEY))
 
     private val _itemDetailsState: MutableStateFlow<ArtDetailsScreenState> =
         MutableStateFlow(ArtDetailsScreenState.Loading)
@@ -31,7 +35,7 @@ class ArtDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadData() {
-        val result = dataProvider.loadDetails(itemNumber)
+        val result = dataProvider.loadDetails(itemId)
         if (result.isSuccess) {
             _itemDetailsState.value = ArtDetailsScreenState.ScreenData(result.getOrThrow())
         } else {

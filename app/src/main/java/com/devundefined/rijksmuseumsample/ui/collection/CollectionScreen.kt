@@ -1,5 +1,6 @@
 package com.devundefined.rijksmuseumsample.ui.collection
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -125,8 +126,16 @@ fun AuthorRow(authorName: String) {
 }
 
 @Composable
-fun ArtItemRow(item: ArtItem, isLast: Boolean, loadMoreAction: () -> Unit = {}, clickItemAction: (String) -> Unit = {}) {
-    Box(modifier = Modifier.padding(horizontal = 8.dp).clickable { clickItemAction(artItem.id) }) {
+fun ArtItemRow(
+    item: ArtItem,
+    isLast: Boolean,
+    loadMoreAction: () -> Unit = {},
+    clickItemAction: (String) -> Unit = {}
+) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .clickable { clickItemAction(item.objectNumber) }) {
         Image(
             painter = rememberImagePainter(
                 data = item.headerImage.url,
@@ -136,7 +145,7 @@ fun ArtItemRow(item: ArtItem, isLast: Boolean, loadMoreAction: () -> Unit = {}, 
                     size(OriginalSize)
                 }
             ),
-            contentDescription = "Image description",
+            contentDescription = "Art item image for object ${item.title}",
             modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.FillWidth
         )

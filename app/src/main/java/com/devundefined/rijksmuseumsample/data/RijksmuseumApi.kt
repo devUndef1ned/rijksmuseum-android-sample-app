@@ -17,7 +17,7 @@ interface RijksmuseumApi {
         @Query("material") material: String,
     ): CollectionDto
 
-    @GET("/api/en/collection/{id}")
+    @GET("api/en/collection/{id}")
     suspend fun getArtDetails(
         @Path("id") itemNumber: String,
         @Query("key") key: String

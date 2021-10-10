@@ -33,7 +33,7 @@ class NetworkLoadService @Inject constructor(private val api: RijksmuseumApi) {
         return runCatching {
             api.getArtDetails(key = API_KEY, itemNumber = itemNumber)
                 .let(detailsDtoToArtItemDetails)
-        }
+        }.onFailure { Log.e(TAG, "Failure occurs when load item details\n$it") }
     }
 
     private companion object {

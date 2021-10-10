@@ -15,12 +15,12 @@ val collectionDtoToPageData: (CollectionDto, Int) -> PageData =
     }
 
 val detailsDtoToArtItemDetails: (ArtDetailsDto) -> ArtItemDetails = { dto ->
-    with(dto) {
+    with(dto.artObject) {
         ArtItemDetails(
             id = id,
             objectNumber = objectNumber,
             title = title,
-            image = webImage.let(imageDtoToModel),
+            image = webImage?.let(imageDtoToModel),
             description = description,
             principalMaker = principalMaker
         )

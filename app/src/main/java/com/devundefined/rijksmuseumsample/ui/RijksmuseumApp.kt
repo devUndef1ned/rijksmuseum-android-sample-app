@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.devundefined.rijksmuseumsample.ui.artdetails.ArtDetailsScreen
+import com.devundefined.rijksmuseumsample.ui.artdetails.ArtDetailsScreenState
+import com.devundefined.rijksmuseumsample.ui.artdetails.ArtDetailsViewModel
 import com.devundefined.rijksmuseumsample.ui.collection.CollectionScreen
 import com.devundefined.rijksmuseumsample.ui.collection.CollectionScreenState
 import com.devundefined.rijksmuseumsample.ui.collection.CollectionViewModel
@@ -39,7 +41,11 @@ fun RijksmuseumApp() {
             })
         ) {
             val itemId = requireNotNull(it.arguments!!.getString(Screen.DETAILS_SCREEN_ARG_KEY))
-            ArtDetailsScreen(itemId) { navController.navigateUp() }
+            it.savedStateHandle.set(Screen.DETAILS_SCREEN_ARG_KEY, itemId)
+
+            val viewModel = hiltViewModel<ArtDetailsViewModel>()
+            val state by viewModel.itemDetailsState.collectAsState(initial = ArtDetailsScreenState.Loading)
+            ArtDetailsScreen(state = state) { navController.navigateUp() }
         }
     }
 }
