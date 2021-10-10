@@ -1,6 +1,5 @@
 package com.devundefined.rijksmuseumsample.ui.collection
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,12 +9,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -25,11 +26,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import coil.compose.rememberImagePainter
-import coil.size.OriginalSize
 import com.devundefined.rijksmuseumsample.R
 import com.devundefined.rijksmuseumsample.domain.model.ArtItem
 import com.devundefined.rijksmuseumsample.domain.model.ImageSpec
+import com.devundefined.rijksmuseumsample.ui.ImageSizeResolver
 
 @Composable
 fun CollectionScreen(
@@ -132,17 +134,21 @@ fun ArtItemRow(
     loadMoreAction: () -> Unit = {},
     clickItemAction: (String) -> Unit = {}
 ) {
+    var size by remember { mutableStateOf(Size.Zero) }
     Box(
         modifier = Modifier
             .padding(horizontal = 8.dp)
-            .clickable { clickItemAction(item.objectNumber) }) {
+            .clickable { clickItemAction(item.objectNumber) }
+            .onGloballyPositioned { layoutCoordinates ->
+                size = layoutCoordinates.size.toSize()
+            }
+    ) {
         Image(
             painter = rememberImagePainter(
                 data = item.headerImage.url,
                 builder = {
-                    crossfade(true)
                     placeholder(R.drawable.image_placeholder_with_background)
-                    size(OriginalSize)
+                    size(ImageSizeResolver(size.width, item.headerImage))
                 }
             ),
             contentDescription = "Art item image for object ${item.title}",
