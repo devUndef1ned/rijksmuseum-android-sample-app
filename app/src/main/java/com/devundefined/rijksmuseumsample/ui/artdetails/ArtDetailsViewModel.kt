@@ -35,6 +35,7 @@ class ArtDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadData() {
+        _itemDetailsState.value = ArtDetailsScreenState.Loading
         val result = dataProvider.loadDetails(itemId)
         if (result.isSuccess) {
             _itemDetailsState.value = ArtDetailsScreenState.ScreenData(result.getOrThrow())

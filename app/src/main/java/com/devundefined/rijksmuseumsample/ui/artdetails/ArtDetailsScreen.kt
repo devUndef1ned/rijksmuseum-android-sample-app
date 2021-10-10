@@ -27,14 +27,14 @@ import com.devundefined.rijksmuseumsample.domain.model.ArtItemDetails
 import com.devundefined.rijksmuseumsample.ui.theme.RijksmuseumSampleTheme
 
 @Composable
-fun ArtDetailsScreen(state: ArtDetailsScreenState, onBack: () -> Unit) {
+fun ArtDetailsScreen(state: ArtDetailsScreenState, onBack: () -> Unit, retryAction: () -> Unit) {
     Box(
         modifier = Modifier
             .background(color = colorResource(id = R.color.primary_light))
             .fillMaxSize()
     ) {
         when (state) {
-            ArtDetailsScreenState.Failure -> FailedContent()
+            ArtDetailsScreenState.Failure -> FailedContent(retryAction)
             ArtDetailsScreenState.Loading -> LoadingContent()
             is ArtDetailsScreenState.ScreenData -> ArtDetailsCard(state.data)
         }
@@ -82,7 +82,7 @@ fun PlaceHolder() {
 @Preview
 fun LoadingPreview() {
     RijksmuseumSampleTheme {
-        ArtDetailsScreen(state = ArtDetailsScreenState.Loading) {}
+        ArtDetailsScreen(state = ArtDetailsScreenState.Loading, {}, {})
     }
 }
 

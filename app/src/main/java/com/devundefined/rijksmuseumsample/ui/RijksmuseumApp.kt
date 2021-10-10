@@ -45,7 +45,11 @@ fun RijksmuseumApp() {
 
             val viewModel = hiltViewModel<ArtDetailsViewModel>()
             val state by viewModel.itemDetailsState.collectAsState(initial = ArtDetailsScreenState.Loading)
-            ArtDetailsScreen(state = state) { navController.navigateUp() }
+            ArtDetailsScreen(
+                state = state,
+                onBack = navController::navigateUp,
+                retryAction = viewModel::retry
+            )
         }
     }
 }
