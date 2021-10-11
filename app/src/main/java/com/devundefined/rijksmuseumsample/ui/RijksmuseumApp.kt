@@ -42,9 +42,6 @@ fun RijksmuseumApp() {
                 type = NavType.StringType
             })
         ) {
-            val itemId = requireNotNull(it.arguments!!.getString(Screen.DETAILS_SCREEN_ARG_KEY))
-            it.savedStateHandle.set(Screen.DETAILS_SCREEN_ARG_KEY, itemId)
-
             val viewModel = hiltViewModel<ArtDetailsViewModel>()
             val state by viewModel.itemDetailsState.collectAsState(initial = ArtDetailsScreenState.Loading)
             ArtDetailsScreen(
